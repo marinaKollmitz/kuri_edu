@@ -13,10 +13,10 @@ joy_input = namedtuple("joy_input", ["input_type", "index"])
 PROFILES = {
     "xbox360": {
         "linear": joy_input("axes", 1),
-        "angular": joy_input("axes", 0),
+        "angular": joy_input("axes", 3),
         "deadman": joy_input("buttons", 4),
-        "linear_scale": 6.,
-        "angular_scale": 9.,
+        "linear_scale": 0.25,
+        "angular_scale": 1.0,
         "color_set": joy_input("buttons", 5),
         "color_x": joy_input("axes", 3),
         "color_y": joy_input("axes", 4),
@@ -50,17 +50,17 @@ class Joystick:
 
         self._joint_states = mobile_base.JointStates()
         self._head_client = mobile_base.HeadClient(self._joint_states)
-        assert self._head_client.wait_for_server(timeout=rospy.Duration(30.0))
+        assert self._head_client.wait_for_server(timeout=rospy.Duration(120.0))
         # At the start, open Kuri's eyes and point the head up:
-        self._head_client.pan_and_tilt(
-            pan=mobile_base.HeadClient.PAN_NEUTRAL,
-            tilt=mobile_base.HeadClient.TILT_UP,
-            duration=1.0
-        )
-        self._head_client.eyes_to(
-            radians=mobile_base.HeadClient.EYES_OPEN,
-            duration=0.5
-        )
+        #self._head_client.pan_and_tilt(
+        #    pan=mobile_base.HeadClient.PAN_NEUTRAL,
+        #    tilt=mobile_base.HeadClient.TILT_UP,
+        #    duration=1.0
+        #)
+        #self._head_client.eyes_to(
+        #    radians=mobile_base.HeadClient.EYES_OPEN,
+        #    duration=0.5
+        #)
 
         self.vel_pub = rospy.Publisher(
             "/mobile_base/commands/velocity", Twist, queue_size=1)
