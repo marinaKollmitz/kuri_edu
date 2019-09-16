@@ -1,6 +1,7 @@
 import rospy
 from geometry_msgs.msg import Twist
 from sensor_msgs.msg import Joy
+from std_msgs.msg import Empty
 from collections import namedtuple
 import math
 import mobile_base
@@ -66,6 +67,8 @@ class Joystick:
             "/mobile_base/commands/velocity", Twist, queue_size=1)
         self.joy_sub = rospy.Subscriber(
             "/joy", Joy, self.joy_cb, queue_size=1)
+        self.flower_pub = rospy.Publisher(
+            "arduino_toggle", Empty, queue_size=1)
         self.load_profile()
         self.last_msg = Joy()
         self.las_vel = Twist()
@@ -95,14 +98,14 @@ class Joystick:
         vel.linear.x = self.profile["linear_scale"] * self.get_in("linear")
         self.las_vel = vel
         self.deadman_pressed = self.get_in("deadman")
-        if self.get_in("button_top"):
-            self.play("button_top")
-        if self.get_in("button_left"):
-            self.play("button_left")
-        if self.get_in("button_right"):
-            self.play("button_right")
-        if self.get_in("button_bottom"):
-            self.play("button_bottom")
+#        if self.get_in("button_top"):
+#            self.play("button_top")
+#        if self.get_in("button_left"):
+#            self.play("button_left")
+#        if self.get_in("button_right"):
+#            self.play("button_right")
+#        if self.get_in("button_bottom"):
+#            self.play("button_bottom")
         if self.get_in("color_set"):
             self.set_color()
         if self.get_in("look_top"):
@@ -113,6 +116,9 @@ class Joystick:
             self.set_head("look_right")
         if self.get_in("look_bottom"):
             self.set_head("look_bottom")
+        if self.get_in("button_left"):
+            self.flower_pub.publish(Empty())
+            #publish 
 
     def _map_color(aself, rad_offset, radians, radius):
         if radians >= 0.:
