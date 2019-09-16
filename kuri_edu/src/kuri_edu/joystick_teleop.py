@@ -7,7 +7,7 @@ import math
 import mobile_base
 import os
 import subprocess
-
+from gizmo_msgs.msg import Command
 
 joy_input = namedtuple("joy_input", ["input_type", "index"])
 
@@ -69,6 +69,8 @@ class Joystick:
             "/joy", Joy, self.joy_cb, queue_size=1)
         self.flower_pub = rospy.Publisher(
             "arduino_toggle", Empty, queue_size=1)
+        self.command_pub = rospy.Publisher(
+            "command", Command, queue_size=1)
         self.load_profile()
         self.last_msg = Joy()
         self.las_vel = Twist()
@@ -209,6 +211,10 @@ class Joystick:
         if self.deadman_pressed:
             self.vel_pub.publish(self.las_vel)
             self.zero_twist_published = False
+            com = Command()
+            com.name="force_idle"
+            print("force idle")
+            self.command_pub.publish(com)
         elif not self.deadman_pressed and not self.zero_twist_published:
             self.vel_pub.publish(Twist())
             self.zero_twist_published = True
