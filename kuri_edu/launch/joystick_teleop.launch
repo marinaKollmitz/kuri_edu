@@ -9,7 +9,7 @@
   <arg name="ps3" default="false"/>
   <arg name="xbox360" default="true"/>
 
-  <node pkg="kuri_edu" type="joystick_teleop" name="joystick_teleop">
+  <node pkg="kuri_edu" type="joystick_teleop" name="joystick_teleop" output="screen">
   </node>
 
   <node pkg="joy" type="joy_node" name="joystick">

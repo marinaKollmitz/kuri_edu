@@ -8,13 +8,14 @@ import mobile_base
 import os
 import subprocess
 from gizmo_msgs.msg import Command
+from mayfield_msgs.msg import KeyValue
 
 joy_input = namedtuple("joy_input", ["input_type", "index"])
 
 PROFILES = {
     "xbox360": {
         "linear": joy_input("axes", 1),
-        "angular": joy_input("axes", 3),
+        "angular": joy_input("axes", 0),
         "deadman": joy_input("buttons", 4),
         "linear_scale": 0.25,
         "angular_scale": 1.0,
@@ -70,7 +71,7 @@ class Joystick:
         self.flower_pub = rospy.Publisher(
             "arduino_toggle", Empty, queue_size=1)
         self.command_pub = rospy.Publisher(
-            "command", Command, queue_size=1)
+            "/command", Command, queue_size=1)
         self.load_profile()
         self.last_msg = Joy()
         self.las_vel = Twist()
@@ -121,6 +122,21 @@ class Joystick:
         if self.get_in("button_left"):
             self.flower_pub.publish(Empty())
             #publish 
+        if self.get_in("button_right"):
+            com = Command()
+            #com.name = 'override_mode'
+            com.name = 'force_idle'
+            #keyval = KeyValue()
+            #keyval.k = 'mode'
+            #keyval.v = 'on'
+            #com.params.append(keyval)
+            #com.name = 'sleep'
+            print('force_idle')
+            self.command_pub.publish(com)
+            rospy.sleep(0.25)
+            #com.name = 'sleed'
+            self.command_pub.publish(com)
+            
 
     def _map_color(aself, rad_offset, radians, radius):
         if radians >= 0.:
@@ -148,31 +164,31 @@ class Joystick:
         if direction == "look_left":
             self._head_client.pan_and_tilt(
                 pan=mobile_base.HeadClient.PAN_LEFT,
-                tilt=mobile_base.HeadClient.TILT_NEUTRAL,
+                tilt=mobile_base.HeadClient.TILT_UP,
                 duration=0.5
             )
             self._head_client.eyes_to(
-                radians=mobile_base.HeadClient.EYES_NEUTRAL,
+                radians=mobile_base.HeadClient.EYES_HAPPY,
                 duration=0.5
             )
         if direction == "look_right":
             self._head_client.pan_and_tilt(
                 pan=mobile_base.HeadClient.PAN_RIGHT,
-                tilt=mobile_base.HeadClient.TILT_NEUTRAL,
+                tilt=mobile_base.HeadClient.TILT_UP,
                 duration=0.5
             )
             self._head_client.eyes_to(
-                radians=mobile_base.HeadClient.EYES_NEUTRAL,
+                radians=mobile_base.HeadClient.EYES_HAPPY,
                 duration=0.5
             )
         if direction == "look_bottom":
             self._head_client.pan_and_tilt(
                 pan=mobile_base.HeadClient.PAN_NEUTRAL,
-                tilt=mobile_base.HeadClient.TILT_DOWN,
+                tilt=mobile_base.HeadClient.TILT_NEUTRAL,
                 duration=0.5
             )
             self._head_client.eyes_to(
-                radians=mobile_base.HeadClient.EYES_SUPER_SAD,
+                radians=mobile_base.HeadClient.EYES_NEUTRAL,
                 duration=0.5
             )
 
@@ -212,8 +228,13 @@ class Joystick:
             self.vel_pub.publish(self.las_vel)
             self.zero_twist_published = False
             com = Command()
-            com.name="force_idle"
-            print("force idle")
+            com.name="override_mode"
+            keyval = KeyValue()
+            keyval.k = "mode"
+            keyval.v = "on"
+            com.params.append(keyval)
+            #com.name = 'force_idle'
+            #print("override")
             self.command_pub.publish(com)
         elif not self.deadman_pressed and not self.zero_twist_published:
             self.vel_pub.publish(Twist())
