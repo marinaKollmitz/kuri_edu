@@ -11,6 +11,8 @@
 
   <node pkg="kuri_edu" type="joystick_teleop" name="joystick_teleop" output="screen">
   </node>
+  <param name="profile" value="logitechRP2"/>
+
 
   <node pkg="joy" type="joy_node" name="joystick">
     <param name="dev" value="/dev/input/js0"/>
