@@ -34,6 +34,28 @@ PROFILES = {
     }
 }
 
+PROFILES = {
+    "logitechRP2": {
+        "linear": joy_input("axes", 1),
+        "angular": joy_input("axes", 2),
+        "deadman": joy_input("buttons", 4),
+        "linear_scale": 0.25,
+        "angular_scale": 1.0,
+        "color_set": joy_input("buttons", 5),
+        "color_x": joy_input("axes", 3),
+        "color_y": joy_input("axes", 4),
+        "button_top": joy_input("buttons", 3),
+        "button_left": joy_input("buttons", 2),
+        "button_right": joy_input("buttons", 1),
+        "button_bottom": joy_input("buttons", 0),
+        "look_top": joy_input("buttons", 3),
+        "look_left": joy_input("buttons", 0),
+        "look_right": joy_input("buttons", 2),
+        "look_bottom": joy_input("buttons", 1),
+        "shoot": joy_input("axes", 5)
+    }
+}
+
 SOUNDS_LOC = "/opt/ros/indigo/share/sound_play/sounds/"
 
 SOUND_MAP = {
